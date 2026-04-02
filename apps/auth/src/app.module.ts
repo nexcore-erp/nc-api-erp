@@ -29,18 +29,7 @@ import { TwoFactorModule } from './two-factor/two-factor.module';
     }),
 
     // RabbitMQ
-    ClientsModule.registerAsync([{
-      name: 'AUTH_SERVICE',
-      useFactory: (config: ConfigService) => ({
-        transport: Transport.RMQ,
-        options: {
-          urls: [config.get<string>('RABBITMQ_URI')],
-          queue: config.get<string>('RABBITMQ_AUTH_QUEUE'),
-          queueOptions: { durable: true },
-        },
-      }),
-      inject: [ConfigService],
-    }]),
+    // Moved to AuthModule
 
     // Throttler (rate limiting global)
     ThrottlerModule.forRootAsync({

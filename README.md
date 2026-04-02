@@ -27,6 +27,14 @@ Microservicio de autenticación para NextCore ERP construido con NestJS, MongoDB
 
 ## Instalación
 
+### Requisitos previos
+- ✅ Node.js 18+ instalado
+- ✅ MongoDB Atlas o local
+- ✅ Redis (local o cloud)
+- ✅ RabbitMQ (local o cloud)
+
+### Pasos de instalación
+
 1. Clona el repositorio
 2. Instala dependencias:
    ```bash
@@ -35,15 +43,22 @@ Microservicio de autenticación para NextCore ERP construido con NestJS, MongoDB
 
 3. Configura las variables de entorno en `.env` (copia de `.env.example`)
 
-4. Levanta los servicios con Docker:
+4. Levanta los servicios externos con Docker (opcional):
    ```bash
    docker-compose up -d
    ```
 
-5. Ejecuta el proyecto:
+5. Ejecuta el proyecto en modo desarrollo:
    ```bash
    npm run start:dev
    ```
+
+### Verificación
+- **Swagger UI**: http://localhost:3001/api
+- **Endpoint de prueba**: 
+  ```bash
+  curl http://localhost:3001/api
+  ```
 
 ## Endpoints API
 
@@ -100,10 +115,29 @@ El servicio publica los siguientes eventos:
 
 ### Comandos disponibles
 
-- `npm run start:dev` - Modo desarrollo con hot reload
-- `npm run build` - Compilar para producción
+#### Modo Desarrollo (recomendado para desarrollo)
+```bash
+npm run start:dev
+```
+- Modo watch: se reinicia automáticamente con cambios
+- Puerto: 3001
+- Swagger: http://localhost:3001/api
+
+#### Modo Producción
+```bash
+npm run build
+npm run start:prod
+```
+
+#### Modo Debug
+```bash
+npm run start:debug
+```
+
+#### Otros comandos
 - `npm run test` - Ejecutar tests
 - `npm run lint` - Ejecutar linter
+- `npm run test:cov` - Tests con cobertura
 
 ### Estructura del proyecto
 
