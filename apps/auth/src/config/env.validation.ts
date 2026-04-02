@@ -1,0 +1,27 @@
+import * as Joi from 'joi';
+
+export const envValidationSchema = Joi.object({
+  NODE_ENV: Joi.string().valid('development', 'production', 'test').required(),
+  PORT: Joi.number().default(3001),
+  APP_NAME: Joi.string().default('NextCore ERP'),
+  MONGODB_URI: Joi.string().required(),
+  REDIS_HOST: Joi.string().default('localhost'),
+  REDIS_PORT: Joi.number().default(6379),
+  REDIS_PASSWORD: Joi.string().optional(),
+  JWT_ACCESS_SECRET: Joi.string().min(32).required(),
+  JWT_ACCESS_EXPIRES_IN: Joi.string().default('15m'),
+  JWT_REFRESH_SECRET: Joi.string().min(32).required(),
+  JWT_REFRESH_EXPIRES_IN: Joi.string().default('7d'),
+  RABBITMQ_URI: Joi.string().required(),
+  RABBITMQ_AUTH_QUEUE: Joi.string().default('auth_queue'),
+  MAIL_HOST: Joi.string().required(),
+  MAIL_PORT: Joi.number().default(587),
+  MAIL_USER: Joi.string().required(),
+  MAIL_PASS: Joi.string().required(),
+  MAIL_FROM: Joi.string().required(),
+  TWO_FACTOR_APP_NAME: Joi.string().default('NextCore ERP'),
+  TWO_FACTOR_ENCRYPTION_KEY: Joi.string().min(32).required(),
+  FRONTEND_URL: Joi.string().default('http://localhost:4200'),
+  THROTTLE_TTL: Joi.number().default(60000),
+  THROTTLE_LIMIT: Joi.number().default(10),
+});
