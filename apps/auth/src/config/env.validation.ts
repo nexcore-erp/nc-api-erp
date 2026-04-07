@@ -22,7 +22,7 @@ export const envValidationSchema = Joi.object({
   MAIL_HOST: Joi.string().default('smtp.gmail.com'),
   MAIL_PORT: Joi.number().default(587),
   MAIL_USER: Joi.string().default('noreply@localhost'),
-  MAIL_PASS: Joi.string().default(''),
+  MAIL_PASS: Joi.string().allow('').default(''),
   MAIL_FROM: Joi.string().default('"NextCore ERP <noreply@localhost>"'),
   TWO_FACTOR_APP_NAME: Joi.string().default('NextCore ERP'),
   TWO_FACTOR_ENCRYPTION_KEY: Joi.string().min(32).required(),
