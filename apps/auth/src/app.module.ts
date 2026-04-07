@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { envValidationSchema } from './config/env.validation';
@@ -19,11 +19,21 @@ import { TwoFactorModule } from './two-factor/two-factor.module';
       validationSchema: envValidationSchema,
     }),
 
-    // MongoDB
-    MongooseModule.forRootAsync({
+    // SQL Server (TypeORM)
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
-        uri: config.get('MONGODB_URI'),
-        dbName: 'nextcore_auth',
+        type: 'mssql',
+        host: config.get('SQL_HOST'),
+        port: parseInt(config.get('SQL_PORT') || '1433', 10),
+        username: config.get('SQL_USERNAME'),
+        password: config.get('SQL_PASSWORD'),
+        database: config.get('SQL_DATABASE'),
+        synchronize: config.get('TYPEORM_SYNCHRONIZE') === 'true',
+        autoLoadEntities: true,
+        options: {
+          encrypt: false,
+        },
       }),
       inject: [ConfigService],
     }),
@@ -33,10 +43,11 @@ import { TwoFactorModule } from './two-factor/two-factor.module';
 
     // Throttler (rate limiting global)
     ThrottlerModule.forRootAsync({
-      useFactory: (config: ConfigService) => [{
-        ttl: config.get('THROTTLE_TTL'),
-        limit: config.get('THROTTLE_LIMIT'),
-      }],
+      imports: [ConfigModule],
+      useFactory: (config: ConfigService) => ({
+        ttl: Number(config.get('THROTTLE_TTL')) || 60,
+        limit: Number(config.get('THROTTLE_LIMIT')) || 10,
+      } as any),
       inject: [ConfigService],
     }),
 

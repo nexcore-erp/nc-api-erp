@@ -1,18 +1,23 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 
-export type RoleDocument = Role & Document;
-
-@Schema({ timestamps: true, collection: 'roles' })
+@Entity({ name: 'roles' })
+@Index('IDX_ROLE_NAME', ['name'], { unique: true })
 export class Role {
-  @Prop({ required: true, unique: true, uppercase: true })
-  name: string;                              // 'ADMIN' | 'MANAGER' | 'USER' | 'VIEWER'
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Prop({ type: [String], default: [] })
-  permissions: string[];                     // 'inventory:read', 'sales:write', etc.
+  @Column({ unique: true })
+  name: string;
 
-  @Prop()
+  @Column('simple-array', { default: '' })
+  permissions: string[];
+
+  @Column({ nullable: true })
   description?: string;
-}
 
-export const RoleSchema = SchemaFactory.createForClass(Role);
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+}

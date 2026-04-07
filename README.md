@@ -1,6 +1,6 @@
 # NextCore ERP - Auth Microservice
 
-Microservicio de autenticación para NextCore ERP construido con NestJS, MongoDB, Redis y RabbitMQ.
+Microservicio de autenticación para NextCore ERP construido con NestJS, SQL Server, Redis y RabbitMQ.
 
 ## Características
 
@@ -16,7 +16,7 @@ Microservicio de autenticación para NextCore ERP construido con NestJS, MongoDB
 ## Stack Tecnológico
 
 - **Framework**: NestJS 10+
-- **Base de datos**: MongoDB 7+ con Mongoose
+- **Base de datos**: SQL Server 2019+ con TypeORM
 - **Cache/Tokens**: Redis 7+ con ioredis
 - **Mensajería**: RabbitMQ con @nestjs/microservices
 - **Autenticación**: Passport.js + @nestjs/jwt
@@ -29,7 +29,7 @@ Microservicio de autenticación para NextCore ERP construido con NestJS, MongoDB
 
 ### Requisitos previos
 - ✅ Node.js 18+ instalado
-- ✅ MongoDB Atlas o local
+- ✅ SQL Server 2019+ (local o cloud)
 - ✅ Redis (local o cloud)
 - ✅ RabbitMQ (local o cloud)
 
@@ -59,6 +59,32 @@ Microservicio de autenticación para NextCore ERP construido con NestJS, MongoDB
   ```bash
   curl http://localhost:3001/api
   ```
+
+## Seed: crear rol admin y usuario admin
+
+Si necesitas un usuario inicial admin en base de datos:
+
+1. Ejecuta el servidor (o en paralelo):
+   ```bash
+   npm run start:dev
+   ```
+
+2. En otra terminal ejecuta el seed (recomendado):
+   ```bash
+   npm run seed:admin
+   ```
+
+- Rol creado: `ADMIN`
+- Email admin: `admin@nextcore.app`
+- Password: `NextCore123!`
+
+3. Loguea con:
+   ```bash
+   curl -X POST http://localhost:3001/auth/login \
+     -H "Content-Type: application/json" \
+     -d '{"email":"admin@nextcore.app","password":"NextCore123!"}'
+   ```
+
 
 ## Endpoints API
 

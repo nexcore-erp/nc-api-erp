@@ -1,39 +1,40 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Role, RoleDocument } from './schemas/role.schema';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Role } from './schemas/role.schema';
 
 @Injectable()
 export class RolesService {
   constructor(
-    @InjectModel(Role.name) private roleModel: Model<RoleDocument>,
+    @InjectRepository(Role) private roleRepository: Repository<Role>,
   ) {}
 
   async createRole(roleData: Partial<Role>): Promise<Role> {
-    const role = new this.roleModel(roleData);
-    return role.save();
+    const role = this.roleRepository.create(roleData as any);
+    const saved = await this.roleRepository.save(role as any);
+    return Array.isArray(saved) ? (saved[0] as Role) : (saved as Role);
   }
 
   async findAll(): Promise<Role[]> {
-    return this.roleModel.find().exec();
+    return this.roleRepository.find();
   }
 
   async findByName(name: string): Promise<Role | null> {
-    const role = await this.roleModel.findOne({ name }).exec();
-    return role ? role.toObject() : null;
+    return this.roleRepository.findOne({ where: { name } });
   }
 
   async findById(id: string): Promise<Role | null> {
-    const role = await this.roleModel.findById(id).exec();
-    return role ? role.toObject() : null;
+    return this.roleRepository.findOne({ where: { id } });
   }
 
   async updateRole(id: string, updateData: Partial<Role>): Promise<Role | null> {
-    const role = await this.roleModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
-    return role ? role.toObject() : null;
+    const role = await this.roleRepository.preload({ id, ...(updateData as any) } as any);
+    if (!role) return null;
+    const saved = await this.roleRepository.save(role as any);
+    return Array.isArray(saved) ? (saved[0] as Role) : (saved as Role);
   }
 
   async deleteRole(id: string): Promise<void> {
-    await this.roleModel.findByIdAndDelete(id).exec();
+    await this.roleRepository.delete(id);
   }
 }

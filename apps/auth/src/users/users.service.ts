@@ -19,17 +19,17 @@ export class UsersService {
       password: hashedPassword,
     });
 
-    return user.toObject();
+    return user;
   }
 
   async findByEmail(email: string): Promise<User | null> {
     const user = await this.usersRepository.findByEmail(email);
-    return user ? user.toObject() : null;
+    return user || null;
   }
 
   async findById(id: string): Promise<User | null> {
     const user = await this.usersRepository.findById(id);
-    return user ? user.toObject() : null;
+    return user || null;
   }
 
   async updateUser(id: string, updateData: Partial<User>): Promise<User | null> {
@@ -37,12 +37,12 @@ export class UsersService {
       updateData.password = await bcrypt.hash(updateData.password, 12);
     }
     const user = await this.usersRepository.updateById(id, updateData);
-    return user ? user.toObject() : null;
+    return user || null;
   }
 
   async findAll(): Promise<User[]> {
     const users = await this.usersRepository.findAll();
-    return users.map(user => user.toObject());
+    return users;
   }
 
   async validatePassword(plainPassword: string, hashedPassword: string): Promise<boolean> {

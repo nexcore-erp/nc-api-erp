@@ -42,6 +42,6 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
     req.body.userId = userId;
     req.body.tokenId = tokenId;
 
-    return { id: (user as any)._id, email: user.email };
+    return { id: (user as any).id || (user as any)._id, email: user.email };
   }
 }

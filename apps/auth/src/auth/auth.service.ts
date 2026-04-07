@@ -74,18 +74,18 @@ export class AuthService {
     }
 
     // Reset failed attempts and update last login
-    await this.usersService.updateUser((user as any)._id, {
+    await this.usersService.updateUser(user.id, {
       failedLoginAttempts: 0,
       lockedUntil: null,
       lastLoginAt: new Date(),
     });
 
     // Generate tokens
-    const tokens = await this.generateTokens((user as any)._id, user.email, user.roles);
+    const tokens = await this.generateTokens(user.id, user.email, user.roles);
 
     // Publish login event
     this.rabbitMqClient.emit('user.logged_in', {
-      userId: (user as any)._id,
+      userId: user.id,
       email: user.email,
       timestamp: new Date(),
     });
@@ -105,7 +105,7 @@ export class AuthService {
     }
 
     // Generate new tokens
-    const tokens = await this.generateTokens((user as any)._id, user.email, user.roles);
+    const tokens = await this.generateTokens(user.id, user.email, user.roles);
 
     return tokens;
   }
@@ -139,7 +139,7 @@ export class AuthService {
 
     // Publish registration event
     this.rabbitMqClient.emit('user.registered', {
-      userId: (user as any)._id,
+      userId: user.id,
       email: user.email,
       firstName: user.firstName,
     });
@@ -155,7 +155,7 @@ export class AuthService {
       const resetToken = this.generateResetToken();
       const hashedToken = await bcrypt.hash(resetToken, 12);
 
-      await this.usersService.updateUser((user as any)._id, {
+      await this.usersService.updateUser(user.id, {
         passwordResetToken: hashedToken,
         passwordResetExpires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
       });
@@ -180,18 +180,18 @@ export class AuthService {
     }
 
     // Update password and clear reset token
-    await this.usersService.updateUser((user as any)._id, {
+    await this.usersService.updateUser(user.id, {
       password: newPassword,
       passwordResetToken: null,
       passwordResetExpires: null,
     });
 
     // Invalidate all refresh tokens
-    await this.tokensService.deleteAllUserRefreshTokens((user as any)._id);
+    await this.tokensService.deleteAllUserRefreshTokens(user.id);
 
     // Publish password change event
     this.rabbitMqClient.emit('user.password_changed', {
-      userId: (user as any)._id,
+      userId: user.id,
       timestamp: new Date(),
     });
   }
@@ -301,12 +301,12 @@ export class AuthService {
     if (attempts >= 5) {
       updates.lockedUntil = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
       this.rabbitMqClient.emit('user.account_locked', {
-        userId: (user as any)._id,
+        userId: user.id,
         lockedUntil: updates.lockedUntil,
       });
     }
 
-    await this.usersService.updateUser((user as any)._id, updates);
+    await this.usersService.updateUser(user.id, updates);
   }
 
   private generateResetToken(): string {

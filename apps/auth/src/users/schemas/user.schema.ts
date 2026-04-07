@@ -1,55 +1,58 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
+import { Role } from '../../roles/schemas/role.schema';
 
-export type UserDocument = User & Document;
-
-@Schema({ timestamps: true, collection: 'users' })
+@Entity({ name: 'users' })
+@Index('IDX_USER_EMAIL', ['email'], { unique: true })
 export class User {
-  @Prop({ required: true, unique: true, lowercase: true, trim: true })
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ unique: true })
   email: string;
 
-  @Prop({ required: true, select: false })   // select:false → no se devuelve en queries normales
+  @Column({ select: false })
   password: string;
 
-  @Prop({ required: true, trim: true })
+  @Column()
   firstName: string;
 
-  @Prop({ required: true, trim: true })
+  @Column()
   lastName: string;
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Role' }], default: [] })
-  roles: Types.ObjectId[];
+  @ManyToMany(() => Role, { cascade: true })
+  @JoinTable({ name: 'user_roles' })
+  roles: Role[];
 
-  @Prop({ default: true })
+  @Column({ default: true })
   isActive: boolean;
 
-  @Prop({ default: false })
+  @Column({ default: false })
   isEmailVerified: boolean;
 
-  @Prop({ default: false })
+  @Column({ default: false })
   isTwoFactorEnabled: boolean;
 
-  @Prop({ select: false })                   // secreto TOTP, nunca expuesto
+  @Column({ nullable: true, select: false })
   twoFactorSecret?: string;
 
-  @Prop({ select: false })
+  @Column({ nullable: true, select: false })
   passwordResetToken?: string;
 
-  @Prop()
+  @Column({ nullable: true, type: 'datetime' })
   passwordResetExpires?: Date;
 
-  @Prop({ default: 0 })
+  @Column({ default: 0 })
   failedLoginAttempts: number;
 
-  @Prop()
+  @Column({ nullable: true, type: 'datetime' })
   lockedUntil?: Date;
 
-  @Prop()
+  @Column({ nullable: true, type: 'datetime' })
   lastLoginAt?: Date;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
-
-export const UserSchema = SchemaFactory.createForClass(User);
-
-// Índices
-UserSchema.index({ email: 1 }, { unique: true });
-UserSchema.index({ passwordResetToken: 1 }, { sparse: true });

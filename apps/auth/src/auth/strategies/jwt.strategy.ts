@@ -35,7 +35,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     return {
-      id: (user as any)._id,
+      id: (user as any).id || (user as any)._id,
       email: user.email,
       roles: user.roles,
       isTwoFactorAuthenticated: payload.isTwoFactorAuthenticated || false,
