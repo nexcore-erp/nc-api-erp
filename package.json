@@ -1,8 +1,18 @@
 {
-  "name": "websocket",
+  "name": "nc-api-erp",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "start": "pm2 start ecosystem.config.js",
+    "stop": "pm2 stop ecosystem.config.js",
+    "restart": "pm2 restart ecosystem.config.js",
+    "status": "pm2 status",
+    "logs": "pm2 logs",
+    "gateway": "node api-gateway/server.js",
+    "auth": "node auth/server.js",
+    "audit": "node audit/server.js",
+    "ws:server": "node websocket/server.js",
+    "ws:client": "node websocket/client.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -10,6 +20,13 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.1",
+    "express": "^5.2.1",
+    "http-proxy-middleware": "^3.0.5",
+    "jsonwebtoken": "^9.0.3",
+    "mssql": "^12.2.1",
     "ws": "^8.20.0"
   }
 }

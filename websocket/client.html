@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Test</title>
+</head>
+<body>
+    <h2>Prueba WebSocket</h2>
+
+    <input type="text" id="mensaje" placeholder="Escribe un mensaje..." />
+    <button onclick="enviar()">Enviar</button>
+
+    <div id="respuestas"></div>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:8080');
+
+        ws.onopen = () => {
+            console.log('Conectado al servidor');
+            mostrar('Conectado al servidor');
+        };
+
+        ws.onmessage = (event) => {
+            mostrar('Servidor: ' + event.data);
+        };
+
+        ws.onerror = (error) => {
+            mostrar('Error de conexion');
+        };
+
+        ws.onclose = () => {
+            mostrar('Desconectado');
+        };
+
+        function enviar() {
+            const msg = document.getElementById('mensaje').value;
+            ws.send(msg);
+            mostrar('Tu: ' + msg);
+        }
+
+        function mostrar(texto) {
+            const div = document.getElementById('respuestas');
+            div.innerHTML += '<p>' + texto + '</p>';
+        }
+    </script>
+</body>
+</html>
